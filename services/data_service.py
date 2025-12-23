@@ -37,6 +37,17 @@ class DataService:
         except Exception as e:
             raise e
 
+    def update_account(self, account_id: str, name: str, type: str, balance: float):
+        try:
+             data = {
+                "name": name,
+                "type": type,
+                "balance": balance
+            }
+             self.supabase.table("accounts").update(data).eq("id", account_id).execute()
+        except Exception as e:
+            raise e
+
     def delete_account(self, account_id: str):
         try:
             self.supabase.table("accounts").delete().eq("id", account_id).execute()
@@ -132,3 +143,48 @@ class DataService:
             self.supabase.table("transactions").delete().eq("id", txn_id).execute()
         except Exception as e:
              raise e
+
+    def update_transaction(self, txn_id: str, description: str, merchant: str, amount: float = None, date_obj: date = None, category_id: str = None):
+        try:
+             data = {}
+             if description: data['description'] = description
+             if merchant: data['merchant'] = merchant
+             if amount is not None: data['amount'] = amount
+             if date_obj is not None: data['date'] = date_obj.isoformat()
+             if category_id: data['category_id'] = category_id
+             
+             self.supabase.table("transactions").update(data).eq("id", txn_id).execute()
+        except Exception as e:
+            raise e
+
+    # --- Budgets ---
+    def create_budget(self, category_id: str, amount_limit: float, period: str = 'monthly'):
+        user_id = self.get_user_id()
+        if not user_id: raise Exception("Auth required")
+        data = { "user_id": user_id, "category_id": category_id, "amount_limit": amount_limit, "period": period }
+        try:
+            self.supabase.table("budgets").insert(data).execute()
+        except Exception as e:
+            raise e
+
+    def get_budgets(self):
+        try:
+            # Join categories to get name
+            return self.supabase.table("budgets").select("*, categories(name)").execute().data
+        except Exception as e:
+            return []
+
+
+
+    def update_budget(self, budget_id: str, amount_limit: float):
+        try:
+            self.supabase.table("budgets").update({"amount_limit": amount_limit}).eq("id", budget_id).execute()
+        except Exception as e:
+            raise e
+
+    def delete_budget(self, budget_id: str):
+        try:
+            self.supabase.table("budgets").delete().eq("id", budget_id).execute()
+        except Exception as e:
+            raise e
+

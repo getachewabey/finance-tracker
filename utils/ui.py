@@ -9,9 +9,14 @@ def inject_custom_css():
     except FileNotFoundError:
         pass
 
-def setup_sidebar():
+def setup_sidebar(ignore_login=False):
     # Inject globally required CSS
     inject_custom_css()
+    
+    # Check Auth globally for all pages using this sidebar
+    if not ignore_login and "user" not in st.session_state:
+        st.warning("Please Log In to access this page.")
+        st.stop()
     
     st.sidebar.title("Finance Tracker")
     

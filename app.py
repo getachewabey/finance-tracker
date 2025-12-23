@@ -60,8 +60,8 @@ def login_form():
                     st.error(f"Sign up failed: {e}")
 
 def main():
-    # Setup Sidebar (Theme Toggle always visible)
-    setup_sidebar()
+    # Setup Sidebar (Theme Toggle always visible, skip login check here to verify auth)
+    setup_sidebar(ignore_login=True)
 
     # Check Auth
     if "user" not in st.session_state:

@@ -54,37 +54,52 @@ def show():
                     st.error(f"Error creating account: {e}")
 
     st.divider()
-    
-    # 3. Manage Categories
-    with st.expander("Manage Categories"):
-        col_cat1, col_cat2 = st.columns(2)
-        with col_cat1:
-            st.subheader("Existing Categories")
-            cats = data_service.get_categories()
-            if cats:
-                df_cats = pd.DataFrame(cats)
-                st.dataframe(df_cats[['name', 'type']], hide_index=True, use_container_width=True)
-            else:
-                st.info("No categories found.")
-        
-        with col_cat2:
-            st.subheader("Add Category")
-            with st.form("add_category_form"):
-                new_cat_name = st.text_input("Category Name", placeholder="e.g. Groceries")
-                new_cat_type = st.selectbox("Type", ["expense", "income"])
-                submitted_cat = st.form_submit_button("Add Category")
-                
-                if submitted_cat:
-                    if new_cat_name:
+
+    # 3. Manage Existing Accounts
+    if accounts:
+        with st.expander("Manage Existing Accounts (Edit / Delete)"):
+            account_names = [a['name'] for a in accounts]
+            selected_acc_name = st.selectbox("Select Account", account_names)
+            
+            # Find selected account object
+            selected_acc = next((a for a in accounts if a['name'] == selected_acc_name), None)
+            
+            if selected_acc:
+                with st.form("edit_account_form"):
+                    new_name = st.text_input("Name", value=selected_acc['name'])
+                    # Handle Type Selection safely
+                    types = ["checking", "savings", "credit", "cash", "investment"]
+                    curr_type = selected_acc['type']
+                    type_idx = types.index(curr_type) if curr_type in types else 0
+                    
+                    new_type = st.selectbox("Type", types, index=type_idx)
+                    new_balance = st.number_input("Balance", value=float(selected_acc['balance']), step=0.01)
+                    
+                    col_update, col_delete = st.columns(2)
+                    with col_update:
+                        submitted_update = st.form_submit_button("Update Account")
+                    with col_delete:
+                        submitted_delete = st.form_submit_button("Delete Account", type="primary")
+                        
+                    if submitted_update:
                         try:
-                            # Use a default color for now
-                            data_service.create_category(new_cat_name, new_cat_type)
-                            st.success(f"Added '{new_cat_name}'!")
+                            data_service.update_account(selected_acc['id'], new_name, new_type, new_balance)
+                            st.success("Account updated!")
                             st.rerun()
                         except Exception as e:
-                            st.error(f"Could not add category. It might already exist.")
-                    else:
-                        st.warning("Enter a name.")
+                            st.error(f"Update failed: {e}")
+                            
+                    if submitted_delete:
+                        try:
+                            data_service.delete_account(selected_acc['id'])
+                            st.warning("Account deleted!")
+                            st.rerun()
+                        except Exception as e:
+                             st.error(f"Delete failed: {e}")
+
+    st.divider()
+    # Categories moved to separate page 06_Categories.py
+    st.info("💡 To manage categories, go to the **Categories** page in the sidebar.")
 
 if __name__ == "__main__":
     show()

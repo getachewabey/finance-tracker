@@ -107,5 +107,55 @@ def show():
     else:
         st.info("No transactions found in this period.")
 
+    st.divider()
+
+    # --- Manage Transactions ---
+    if txns:
+        with st.expander("Manage Transactions (Edit / Delete)"):
+            # Select transaction to manage by description/date/amount
+            # A bit tricky to select comfortably. Let's make a selectbox format string
+            txn_opts = {f"{t['date']} | {t['merchant']} | ${t['amount']}": t for t in txns}
+            selected_txn_str = st.selectbox("Select Transaction", list(txn_opts.keys()))
+            
+            if selected_txn_str:
+                selected_txn = txn_opts[selected_txn_str]
+                st.write(f"**Selected:** {selected_txn['description']}")
+                
+                with st.form("edit_txn_form"):
+                    new_desc = st.text_input("Description", value=selected_txn['description'] or "")
+                    new_merch = st.text_input("Merchant", value=selected_txn['merchant'] or "")
+                    new_amt = st.number_input("Amount", value=float(abs(selected_txn['amount'])), step=0.01)
+                    
+                    # Update & Delete
+                    c1, c2 = st.columns(2)
+                    with c1:
+                        if st.form_submit_button("Update Transaction"):
+                            # If Expense/Income sign logic needed? Assuming keeping same sign for now simplicity
+                            # Or we can ask user. For MVP, assume sign is preserved based on existing.
+                            original_sign = -1 if float(selected_txn['amount']) < 0 else 1
+                            final_amt = new_amt * original_sign
+                            
+                            try:
+                                data_service.update_transaction(
+                                    selected_txn['id'],
+                                    description=new_desc,
+                                    merchant=new_merch,
+                                    amount=final_amt
+                                    # date, category left as is for simplicity
+                                )
+                                st.success("Updated!")
+                                st.rerun()
+                            except Exception as e:
+                                st.error(f"Error: {e}")
+                    
+                    with c2:
+                         if st.form_submit_button("Delete Transaction", type="primary"):
+                             try:
+                                 data_service.delete_transaction(selected_txn['id'])
+                                 st.warning("Deleted!")
+                                 st.rerun()
+                             except Exception as e:
+                                 st.error(f"Error: {e}")
+
 if __name__ == "__main__":
     show()
