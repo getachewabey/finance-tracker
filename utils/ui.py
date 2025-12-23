@@ -11,6 +11,7 @@ def inject_custom_css():
 
 def setup_sidebar(ignore_login=False):
     # Inject globally required CSS
+    # (Forcing reload)
     inject_custom_css()
     
     # Check Auth globally for all pages using this sidebar
