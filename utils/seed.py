@@ -5,8 +5,9 @@ def seed_defaults():
     ds = DataService()
     
     # Check if we have categories
+    # Check if we have categories
     existing = ds.get_categories()
-    if not existing:
+    if len(existing) < 2:
         defaults = [
             ("Food", "expense"),
             ("Rent", "expense"),

@@ -51,6 +51,7 @@ Detailed documentation is available in the [`docs/`](docs/) directory:
 - **[Design Specification](docs/design_spec.md)**: Full architecture, schema, and page design.
 - **[Implementation Plan](docs/implementation_plan.md)**: Step-by-step build log.
 - **[Walkthrough](docs/walkthrough.md)**: User guide and features overview.
+- **[Deployment Guide](docs/DEPLOYMENT.md)**: Instructions for Streamlit Cloud.
 
 ## Project Structure
 
