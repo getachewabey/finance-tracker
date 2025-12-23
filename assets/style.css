@@ -1,0 +1,58 @@
+/* Modern Font Import */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+html, body, [class*="css"] {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Glassmorphism for Containers */
+div[data-testid="stForm"] {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    border: 1px solid rgba(128, 128, 128, 0.2);
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Metric Cards */
+div[data-testid="stMetric"] {
+    background-color: var(--secondary-background-color);
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease;
+}
+
+div[data-testid="stMetric"]:hover {
+    transform: translateY(-2px);
+}
+
+/* Primary Buttons */
+button[kind="primary"] {
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+}
+
+button[kind="primary"]:hover {
+    box-shadow: 0 4px 12px rgba(108, 99, 255, 0.3) !important;
+}
+
+/* DataFrame styling */
+div[data-testid="stDataFrame"] {
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(128, 128, 128, 0.2);
+}
+
+/* Sidebar Polish */
+section[data-testid="stSidebar"] {
+    border-right: 1px solid rgba(128, 128, 128, 0.1);
+}
+
+/* Headings */
+h1, h2, h3 {
+    font-weight: 700 !important;
+    letter-spacing: -0.5px;
+}
